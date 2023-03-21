@@ -1,0 +1,29 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true,
+        "webextensions": true
+    },
+    "extends": [
+        "plugin:vue/vue3-essential",
+        "airbnb-base"
+    ],
+    "overrides": [
+    ],
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "plugins": [
+        "vue"
+    ],
+    "rules": {
+        "max-len": ["warn", { "code": 120, "ignoreTrailingComments": true }],
+        "no-plusplus": "off",
+        "no-restricted-syntax": "off",
+        "no-continue": "off",
+        "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["state"] }],
+        "import/extensions": "off",
+        "import/no-unresolved": "off"
+    }
+}
