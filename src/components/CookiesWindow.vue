@@ -3,7 +3,7 @@
        :style="{width: `${100 - width}%`}"
        :class="{ dividing: isDividing }"
   >
-    <div id="panel">
+    <div id="panel" ref="panel">
       <div class="row">
         <div id="refresh-btn"
              class="btn"
@@ -35,21 +35,23 @@
         </div>
       </div>
     </div>
-    <data-table
-        :data="this.tableData"
-        :on-sorting-changed="this.onSortingChanged"
-        :sorting-order="this.sortingOrder"
-        :sorting-field="this.sortingField"
-        :height="isCookieSelected ? dividerPosition : 100"
-    />
-    <div id="divider"
-         v-if="isCookieSelected"
-         :style="{top: `${dividerPosition}%`}"
-         @mousedown="startDragging"
-    ></div>
-    <cookie-viewer v-if="isCookieSelected"
-                   :height="dividerPosition"
-    />
+    <div id="right-wrapper" ref="rightWrapper">
+      <data-table
+          :data="this.tableData"
+          :on-sorting-changed="this.onSortingChanged"
+          :sorting-order="this.sortingOrder"
+          :sorting-field="this.sortingField"
+          :height="isCookieSelected ? dividerPosition : 100"
+      />
+      <div id="divider"
+           v-if="isCookieSelected"
+           :style="{top: `${dividerPosition}%`}"
+           @mousedown="startDragging"
+      ></div>
+      <cookie-viewer v-if="isCookieSelected"
+                     :height="dividerPosition"
+      />
+    </div>
   </div>
 </template>
 
@@ -78,7 +80,11 @@ export default {
     document.addEventListener('mousemove', this.handleDragging);
     window.addEventListener('mouseup', this.endDragging);
 
+    window.addEventListener('endDragging', this.setRightWrapperHeight);
+
     this.dividerPosition = this.settings[SettingKeys.COOKIE_VIEWER_DIVIDER_POSITION];
+
+    this.setRightWrapperHeight();
   },
   computed: {
     ...mapGetters(['hostsTree', 'selectedDomain', 'selectedCookie', 'isCookieSelected', 'headers', 'settings', 'filteredCookies']),
@@ -110,6 +116,12 @@ export default {
     },
   },
   methods: {
+    setRightWrapperHeight() {
+      const panelHeight = this.$refs?.panel?.getBoundingClientRect()?.height ?? 65;
+      if (this.$refs.rightWrapper) {
+        this.$refs.rightWrapper.style.height = `calc(100% - ${panelHeight}px)`;
+      }
+    },
     isHeaderVisible(headerKey) {
       return this.settings[SettingKeys.HIDDEN_HEADERS].indexOf(headerKey) < 0;
     },
@@ -163,7 +175,10 @@ export default {
         return;
       }
 
-      const percentage = (e.pageY / window.innerHeight) * 100
+      const percentage = (
+          (e.pageY - this.$refs.panel.getBoundingClientRect().height)
+          / this.$refs.rightWrapper.getBoundingClientRect().height
+      ) * 100;
 
       // limit also by a min height
       if (percentage >= 10 && e.pageY >= 100 && percentage <= 90) {
@@ -182,6 +197,11 @@ export default {
       this.$store.dispatch('updateSettings', { [SettingKeys.COOKIE_VIEWER_DIVIDER_POSITION]: this.dividerPosition });
     },
   },
+  watch: {
+    isCookieSelected(newValue, oldValue) {
+      this.setRightWrapperHeight();
+    }
+  },
 }
 </script>
 
@@ -197,6 +217,10 @@ export default {
 
     &.dividing {
       user-select: none;
+    }
+
+    #right-wrapper {
+      position: relative;
     }
 
     #panel {

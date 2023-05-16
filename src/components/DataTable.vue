@@ -1,7 +1,7 @@
 <template>
   <div id="data-table"
        :class="{'not-selectable': this.isDividing}"
-       :style="{ height: `calc(${this.height}% - 65px)` }"
+       :style="{ height: `${this.height}%` }"
        ref="dataTable"
   >
     <div id="header">

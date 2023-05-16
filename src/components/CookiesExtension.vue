@@ -94,6 +94,8 @@ export default {
 
       this.isDividing = false;
       this.$store.dispatch('updateSettings', { [SettingKeys.WINDOW_DIVIDER_POSITION]: this.dividerPosition });
+
+      window.dispatchEvent(new CustomEvent('endDragging'))
     },
     handleClickDuringFocus(e) {
       if (!this.isCookieSelected) {
