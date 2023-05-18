@@ -78,7 +78,7 @@ export default class HostsTreeBuilder {
 
       let currentLevel = hostsTree;
       for (let i = augmentedSplit.length - 2; i >= 0; i--) {
-        const hostname = augmentedSplit.slice(i).join('.').replace('..', '.');
+        const hostname = augmentedSplit.slice(i).join('.').replace(/\.{2,}/g, '.');
         if (i === 0) {
           // the full hostname is there, add cookie to the tree
           currentLevel[hostname].cookies.push(cookie);
