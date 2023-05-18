@@ -39,10 +39,20 @@ export default class CellSaver {
     newCookieObject[cellKey].value = value;
     const newCookie = CookieConverter.objectToChromeCookie(newCookieObject);
 
-    const newCookieWithoutSession = { ...newCookie }; // Chrome API doesn't accept session field
-    delete newCookieWithoutSession.session;
+    // Need a couple of adjustments for Chrome API cookie
+    const newCookieForChrome = { ...newCookie };
+    delete newCookieForChrome.session;
 
-    await chrome.cookies.set(newCookieWithoutSession);
+    /**
+     * When cookie doesn't start with dot, the `domain` field has to be deleted.
+     * Chrome API saves domain with a lead dot when you set it, even there is no dot.
+     * To avoid this, domain is deleted from saving and Chrome API looks at `url` field
+     */
+    if (!newCookieForChrome.domain.startsWith('.')) {
+      delete newCookieForChrome.domain;
+    }
+
+    await chrome.cookies.set(newCookieForChrome);
     await store.dispatch('updateCookie', { newCookie });
   }
 }
