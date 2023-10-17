@@ -6,9 +6,9 @@
          :data-domain="leveldHost.domainName"
          @click="onHostClick"
     >
-      <span class="host-level" v-for="idx in leveldHost.level" :key="`lvld-host-${idx}`">⋅</span>
-      {{ leveldHost.domainName }}
+      <span class="host-level" v-for="idx in leveldHost.level" :key="`lvld-host-${idx}`">-</span>
       ({{ leveldHost.cookiesCount }})
+      <strong>{{ prefixSubdomainWithAsterisk(leveldHost.domainName) }}</strong>
     </div>
   </div>
 </template>
@@ -41,6 +41,9 @@ export default {
       }
 
       return resultArr;
+    },
+    prefixSubdomainWithAsterisk(domainName) {
+      return domainName.startsWith('.') ? `*${domainName}` : domainName;
     },
     onHostClick(e) {
       this.$store.dispatch('setSelectedDomain', e.currentTarget.dataset.domain);
@@ -86,10 +89,19 @@ export default {
         color: #000;
       }
 
+      strong {
+        font-weight: 500;
+      }
+
       span.host-level {
         display: inline-block;
-        width: 6px;
+        width: 5px;
         margin-bottom: 0.5px;
+        color: #aaa;
+
+        &:last-of-type {
+          margin-right: 3px;
+        }
       }
     }
   }

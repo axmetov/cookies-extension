@@ -23,12 +23,11 @@ export default class HostsTreeBuilder {
       for (let i = split.length - 2; i >= 0; i--) {
         const hostname = split.slice(i).join('.');
         hostsVariants.push(hostname); // host
-        hostsVariants.push(`.${hostname}`); // subhosts
+        const subHostName = `.${hostname}`;
+        hostsVariants.push(subHostName); // subhosts
 
         if (i === split.length - 2) {
           // only for top level and first sublevel
-          const subHostName = `.${hostname}`;
-
           if (!hostsTree[hostname]) {
             hostsTree[hostname] = {
               [subHostName]: {
@@ -41,7 +40,6 @@ export default class HostsTreeBuilder {
           prevSubHost = hostsTree[hostname][subHostName];
         } else if (!prevSubHost[hostname]) {
           // further sublevels
-          const subHostName = `.${hostname}`;
           prevSubHost[hostname] = {
             [subHostName]: {
               cookies: [],
