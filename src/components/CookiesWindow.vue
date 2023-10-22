@@ -9,16 +9,22 @@
              class="btn"
              title="Refresh"
              @click="onRefresh"
-        >🔄</div>
+        >⭮</div>
         <div id="filter">
           <input type="text" placeholder="Filter" @input="onFilter" />
         </div>
+        <div id="delete-all-btn"
+             class="btn"
+             :class="{ disabled: !this.isThereAnyCookie }"
+             title="Delete All for the Selected Host"
+             @click="onDeleteAll"
+        ><span>✕</span></div>
         <div id="delete-selected-btn"
              class="btn"
+             :class="{ disabled: !this.isCookieSelected }"
              title="Delete Selected"
              @click="onDelete"
-             v-if="Object.keys(selectedCookie).length > 0"
-        >🗑️</div>
+        >✕</div>
       </div>
       <div class="row">
         <div id="columns-filter">
@@ -114,6 +120,12 @@ export default {
     tableData() {
       return this.sortedFilteredCookies.map(cookie => CookieConverter.chromeCookieToObject(cookie));
     },
+    isCookieSelected() {
+      return Object.keys(this.selectedCookie).length > 0;
+    },
+    isThereAnyCookie() {
+      return this.filteredCookies.length > 0;
+    }
   },
   methods: {
     setRightWrapperHeight() {
@@ -141,7 +153,21 @@ export default {
     onRefresh() {
       this.$store.dispatch('loadCookiesFromChrome');
     },
+    onDeleteAll() {
+      if (!this.isThereAnyCookie) {
+        return;
+      }
+
+      this.$store.dispatch('deleteCookiesByUrl', {
+        url: this.selectedDomain,
+      });
+
+    },
     onDelete() {
+      if (!this.isCookieSelected) {
+        return;
+      }
+
       const chromeCookie = CookieConverter.objectToChromeCookie(this.selectedCookie)
       this.$store.dispatch('deleteCookie', {
         name: chromeCookie.name,
@@ -235,29 +261,85 @@ export default {
       div.row {
         display: flex;
 
+        #filter {
+          margin-right: 5px;
+        }
+
         .btn {
           width: 30px;
           font-size: 14px;
           text-align: center;
-          cursor: pointer;
           user-select: none;
 
-          &:hover {
-            box-shadow: 0 0 1px black;
-            background-color: rgba(255, 255, 255, .5);
-          }
+          &:not(.disabled) { // active button
+            cursor: pointer;
 
-          &:active {
-            box-shadow: 0 0 1px black inset;
-            background-color: rgba(0, 0, 0, .1);
+            &:hover {
+              box-shadow: 0 0 1px black;
+              background-color: rgba(255, 255, 255, .5);
+            }
+
+            &:active {
+              box-shadow: 0 0 1px black inset;
+              background-color: rgba(0, 0, 0, .1);
+            }
+
+            &#delete-selected-btn {
+              color: #de0000;
+              text-shadow: 0 0 1px #de0000;
+            }
           }
 
           &#refresh-btn {
             margin-right: 5px;
+            font-size: 18px;
+            line-height: 19px;
           }
 
           &#delete-selected-btn {
             margin-left: 5px;
+            color: #aaa;
+            text-shadow: 0 0 1px #aaa;
+            font-weight: bold;
+          }
+
+          &#delete-all-btn {
+            position: relative;
+
+            &:before {
+              content: "";
+              position: absolute;
+              width: 40%;
+              height: 15%;
+              border-top: 2px solid #333;
+              border-bottom: 2px solid #333;
+              top: 23%;
+              left: 25%;
+              z-index: 0;
+            }
+
+            span {
+              font-size: 10px;
+              font-weight: bolder;
+              color: #de0000;
+              position: absolute;
+              z-index: 1;
+              bottom: 5%;
+              text-shadow: 0 0 1px #de0000;
+              background-color: #f1f3f4;
+              line-height: 12px;
+            }
+
+            &:after {
+              content: "";
+              position: absolute;
+              width: 40%;
+              height: 20%;
+              border-bottom: 2px solid #777777;
+              top: 50%;
+              z-index: 0;
+              left: 25%
+            }
           }
         }
 

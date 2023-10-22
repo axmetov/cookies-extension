@@ -136,6 +136,27 @@ document.addEventListener('DOMContentLoaded', () => {
         );
         await context.dispatch('updateAllCookies', cookiesWithoutRemoved);
       },
+      async deleteCookiesByUrl(context, { url }) {
+        const toNotPrefixedUrl = url => url.startsWith('.') ? url.slice(1) : url;
+        const notPrefixedUrl = toNotPrefixedUrl(url);
+
+        const domainRegexp = new RegExp(`.*\\.${notPrefixedUrl.replace('.', '\\.')}$`);
+        const cookiesToRemove = url === 'all hosts'
+          ? [...context.state.hostsTree.cookies]
+          : context.state.hostsTree.cookies.filter(
+            cookie => cookie.domain === url || domainRegexp.test(cookie.domain)
+          );
+
+        const removePromises = [];
+        for (const cookie of cookiesToRemove) {
+          // try both schemes
+          removePromises.push(chrome.cookies.remove({ name: cookie.name, url: `http://${toNotPrefixedUrl(cookie.domain)}` }));
+          removePromises.push(chrome.cookies.remove({ name: cookie.name, url: `https://${toNotPrefixedUrl(cookie.domain)}` }));
+        }
+
+        await Promise.all(removePromises);
+        await context.dispatch('loadCookiesFromChrome');
+      },
       async updateSettings(context, newSettings) {
         const newSettingsCast = { ...newSettings };
 
