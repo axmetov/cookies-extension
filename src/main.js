@@ -9,7 +9,7 @@ import SettingKeys from './classes/SettingKeys';
 document.addEventListener('DOMContentLoaded', () => {
   const app = createApp(CookiesExtension);
 
-  function filterUniqueHosts(resources) {
+  function getHostsFromResources(resources) {
     const documentResources = resources.filter((resource) => resource.type === 'document');
     const documentHostsRaw = documentResources
       .map((resource) => {
@@ -25,10 +25,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function onResourcesLoaded(resources, store) {
-    const uniqueHosts = filterUniqueHosts(resources);
-    await store.commit('setUniqueHosts', { uniqueHosts });
+    const hostsFromResources = getHostsFromResources(resources);
 
-    const allCookies = await chrome.cookies.getAll({});
+    const topLevelHosts = [];
+    for (const host of hostsFromResources) {
+      // get base host of each one
+      topLevelHosts.push(host.match(/[^.]+\.[^.]+$/)[0]);
+    }
+    // make the hosts unique (again)
+    const topLevelBaseHosts = [...new Set(topLevelHosts)];
+
+    const allCookiesPromises = [];
+    for (const host of topLevelBaseHosts) {
+      // get all cookies for the base domains
+      allCookiesPromises.push(chrome.cookies.getAll({ domain: host }));
+    }
+
+    const allCookies = (await Promise.all(allCookiesPromises)).flat();
+
+    const uniqueHosts = [...new Set(allCookies.map(cookie => cookie.domain.startsWith('.') ? cookie.domain.substring(1) : cookie.domain))];
+    await store.commit('setUniqueHosts', { uniqueHosts });
     await store.dispatch('updateAllCookies', allCookies);
   }
 
@@ -91,8 +107,8 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       updateAllCookies(context, cookies) {
         const hostsTree = HostsTreeBuilder.buildHostsTree(context.state.uniqueHosts, cookies);
-        context.commit('setCookies', { cookies });
         context.commit('setHostsTree', { hostsTree });
+        context.commit('setCookies', { cookies });
       },
       updateCookie(context, { newCookie }) {
         const allCookies = [...context.state.cookies];
