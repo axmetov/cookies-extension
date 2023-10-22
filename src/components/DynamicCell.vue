@@ -4,6 +4,7 @@
            v-if="!this.isTextarea(cookieField) && this.isInput(cookieField)"
            type="text"
            :value="cookieField.value"
+           :title="cookieField.value"
            :data-key="cookieField.key"
            tabindex="0"
            @mouseup="(e) => this.onMouseUp(e, cellIdx)"
@@ -13,6 +14,7 @@
     <textarea class="input-cell"
               v-if="this.isTextarea(cookieField)"
               :value="this.formatValueForTextarea(cookieField.value)"
+              :title="this.formatValueForTextarea(cookieField.value)"
               :data-key="cookieField.key"
               tabindex="0"
               rows="10"
@@ -51,6 +53,7 @@
           @mouseup="(e) => this.onMouseUp(e, cellIdx)"
           @blur="this.onBlur"
           @keydown="onKey"
+          :title="getOutputImmutableText(cookieField)"
     >
           {{ getOutputImmutableText(cookieField) }}
         </span>
@@ -60,6 +63,7 @@
            v-if="this.isExpirationDateMutableInput(cookieField)"
            type="text"
            :value="this.formatExpirationDate(cookieField.value)"
+           :title="this.formatExpirationDate(cookieField.value)"
            :data-key="cookieField.key"
            tabindex="0"
            @mouseup="(e) => this.onMouseUp(e, cellIdx)"

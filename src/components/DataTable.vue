@@ -13,7 +13,7 @@
            ref="columns"
       >
         <span class="divider" v-if="idx > 0" @mousedown="startDragging(idx)"></span>
-        <span class="header-name">{{ header.name }}</span>
+        <span class="header-name" :title="header.name">{{ header.name }}</span>
         <span class="sorting-indicator" v-if="this.sortingOrder === 'asc' && this.sortingField === header.key">▲</span>
         <span class="sorting-indicator" v-if="this.sortingOrder === 'desc' && this.sortingField === header.key">▼</span>
       </div>
@@ -36,7 +36,6 @@ import Cookie from "./Cookie";
 import {mapGetters} from "vuex";
 import SettingKeys from "../classes/SettingKeys";
 import hash from "object-hash";
-import {toRaw} from "vue";
 
 export default {
   name: "DataTable",
