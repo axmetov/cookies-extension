@@ -126,7 +126,7 @@ export default {
     background-color: white;
 
     &:nth-of-type(2n) {
-      background-color: #f1f3f4;
+      background-color: #f7f9fa;
     }
 
     &.focused {
@@ -139,6 +139,7 @@ export default {
       box-sizing: border-box;
       display: flex;
       align-items: center;
+      padding: 1px 0 1px 1px;
 
       &:last-of-type {
         border-right: none;
