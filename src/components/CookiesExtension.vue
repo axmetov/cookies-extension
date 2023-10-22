@@ -62,6 +62,7 @@ export default {
             [SettingKeys.HEADERS_WIDTHS]: settings?.[SettingKeys.HEADERS_WIDTHS] ?? Array(9).fill(100 / 9),
             [SettingKeys.WINDOW_DIVIDER_POSITION]: settings?.[SettingKeys.WINDOW_DIVIDER_POSITION] ?? 25,
             [SettingKeys.COOKIE_VIEWER_DIVIDER_POSITION]: settings?.[SettingKeys.COOKIE_VIEWER_DIVIDER_POSITION] ?? 50,
+            [SettingKeys.HOSTS_TREE_COMPACT_TREE]: settings?.[SettingKeys.HOSTS_TREE_COMPACT_TREE] ?? true,
           };
 
           await this.$store.dispatch('updateSettings', receivedSettings);
