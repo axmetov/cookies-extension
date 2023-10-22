@@ -38,9 +38,12 @@ export default {
     });
 
     chrome.tabs.onUpdated.addListener(tabId => {
-      chrome.tabs.query({ active:true }, tab => {
-        if (tabId === tab[0].id) {
-          this.$store.dispatch('loadCookiesFromChrome');
+      chrome.tabs.query({ active:true }, tabs => {
+        for (const tab of tabs) {
+          if (tabId === tab.id) {
+            this.$store.dispatch('loadCookiesFromChrome');
+            break;
+          }
         }
       });
     });
