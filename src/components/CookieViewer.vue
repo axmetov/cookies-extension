@@ -3,20 +3,31 @@
        :style="{ height: `${100 - this.height}%` }"
   >
     <div id="manage-panel">
-      <button id="delete-cookie" @click="onDeleteButton">🗑️ Delete Cookie</button>
+      <button class="delete-cookie manage-button" @click="onDeleteButton">🗑️ Delete</button>
+      <button class="save-cookie manage-button" @click="onSaveButton">✔ Save</button>
+      <Transition name="fade">
+        <span class="saved-mark" v-if="isSaved">Saved ✔</span>
+      </Transition>
       <span id="closing-cross" title="Close" @click="onCloseButton">×</span>
     </div>
     <div id="fields">
       <template v-for="header in headers">
         <span class="col-name">{{ header.name }}</span>
-        <dynamic-cell :cookie-field="this.selectedCookie[header.key]"
-                      :on-mouse-up="this.onMouseUp"
-                      :on-blur="this.onBlur"
-                      :on-select-change="this.onSelectChange"
-                      :on-key="this.onKey"
+        <dynamic-cell :cookie-field="selectedCookie[header.key]"
+                      :on-mouse-up="onMouseUp"
+                      :on-blur="onBlur"
+                      :on-select-change="onSelectChange"
+                      :on-key="onKey"
                       :value-as-textarea="header.key === 'value'"
         />
       </template>
+    </div>
+    <div class="buttons-row">
+      <Transition name="fade">
+        <span class="saved-mark" v-if="isSaved">Saved ✔</span>
+      </Transition>
+      <button class="delete-cookie manage-button" @click="onDeleteButton">🗑️ Delete</button>
+      <button class="save-cookie manage-button" @click="onSaveButton">✔ Save</button>
     </div>
   </div>
 </template>
@@ -37,6 +48,8 @@ export default {
     return {
       skipSaveOnBlur: false,
       inputValueBeforeEditStarted: '',
+      isSaved: false,
+      savedMarkTransitionTime: 1000,
     };
   },
   computed: {
@@ -77,6 +90,10 @@ export default {
       this.$store.dispatch('setSelectedCellIdx', -1);
       this.$store.dispatch('setSelectedCookie', {});
     },
+    onSaveButton() {
+      this.isSaved = true;
+      setTimeout(() => this.isSaved = false, this.savedMarkTransitionTime);
+    },
     onCloseButton() {
       this.$store.dispatch('setSelectedCellIdx', -1);
       this.$store.dispatch('setSelectedCookie', {});
@@ -93,18 +110,40 @@ export default {
     border-top: 1px solid #ccc;
     overflow: auto;
 
-    div#manage-panel {
-      text-align: right;
+    .fade-enter-active,
+    .fade-leave-active {
+      transition: opacity 0.5s ease;
+    }
 
-      button#delete-cookie {
-        float: left;
-        background: white;
-        border-radius: 3px;
+    .fade-enter-from,
+    .fade-leave-to {
+      opacity: 0;
+    }
+
+    .saved-mark {
+      display: inline-flex;
+      align-items: center;
+      height: 25px;
+      margin-right: 10px;
+      color: #358940;
+      font-size: 14px;
+    }
+
+    button.manage-button {
+      background: white;
+      border-radius: 3px;
+      padding: 3px 5px;
+      cursor: pointer;
+      box-sizing: border-box;
+
+      &:active {
+        border-width: 2px;
+        padding: 2px 4px;
+      }
+
+      &.delete-cookie {
         border: 1px solid #833;
-        padding: 3px 5px;
-        cursor: pointer;
         color: #833;
-        box-sizing: border-box;
 
         &:hover {
           background-color: #fffafafa;
@@ -114,11 +153,40 @@ export default {
 
         &:active {
           background-color: #caa;
-          border-width: 2px;
-          padding: 2px 4px;
           border-color: #500;
           color: #500;
         }
+      }
+
+      &.save-cookie {
+        border: 1px solid #33883e;
+        color: #33883e;
+        margin-left: 5px;
+
+        &:hover {
+          background-color: #FFFAFAF9;
+          border-color: #5baa55;
+          color: #5baa55;
+        }
+
+        &:active {
+          background-color: #afccaa;
+          border-color: #095500;
+          color: #095500;
+        }
+      }
+    }
+
+    div#manage-panel {
+      text-align: right;
+
+      button.manage-button {
+        float: left;
+      }
+
+      .saved-mark {
+        float: left;
+        margin-left: 10px;
       }
 
       span#closing-cross {
@@ -170,6 +238,19 @@ export default {
 
       :deep(span.immutable-cell) {
         align-self: baseline;
+      }
+    }
+
+    div.buttons-row {
+      text-align: right;
+      margin-top: 15px;
+      margin-bottom: 10px;
+      padding-right: 25px;
+
+      button.save-cookie {
+        &:active {
+          margin-left: 7px;
+        }
       }
     }
   }
