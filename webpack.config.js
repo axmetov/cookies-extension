@@ -27,11 +27,18 @@ module.exports = {
                 loader: "vue-loader",
             },
             {
-                test: /\.less$/,
+                test: /\.(css|sass|less)$/,
                 use: [
-                    MiniCssExtractPlugin.loader,
+                    'style-loader',
+                    {
+                        loader: MiniCssExtractPlugin.loader,
+                        options: {
+                            esModule: false,
+                        },
+                    },
                     'css-loader',
                     'less-loader',
+                    'sass-loader',
                 ],
             },
         ],
