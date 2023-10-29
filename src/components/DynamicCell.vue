@@ -1,92 +1,80 @@
 <template>
-  <template v-if="isStandardField(cookieField)">
+  <template v-if="isRenderableField(cookieField)">
     <input class="input-cell"
-           v-if="!this.isTextarea(cookieField) && this.isInput(cookieField)"
-           type="text"
-           :value="cookieField.value"
-           :title="cookieField.value"
-           :data-key="cookieField.key"
-           tabindex="0"
-           @mouseup="(e) => this.onMouseUp(e, cellIdx)"
-           @blur="this.onBlur"
-           @keydown="onKey"
+      v-if="!this.isTextarea(cookieField) && this.isInput(cookieField)"
+      type="text"
+      :value="cookieField.value"
+      :title="cookieField.value"
+      :data-key="cookieField.key"
+      tabindex="0"
+      @mouseup="(e) => this.onMouseUp(e, cellIdx, cookieField.key)"
+      @blur="this.onBlur"
+      @keydown="onKey"
     />
     <textarea class="input-cell"
-              v-if="this.isTextarea(cookieField)"
-              :value="this.formatValueForTextarea(cookieField.value)"
-              :title="this.formatValueForTextarea(cookieField.value)"
-              :data-key="cookieField.key"
-              tabindex="0"
-              rows="10"
-              @mouseup="(e) => this.onMouseUp(e, cellIdx)"
-              @blur="this.onBlur"
-              @keydown="onKey"
+      v-else-if="this.isTextarea(cookieField)"
+      :value="this.formatValueForTextarea(cookieField.value)"
+      :title="this.formatValueForTextarea(cookieField.value)"
+      :data-key="cookieField.key"
+      tabindex="0"
+      rows="10"
+      @mouseup="(e) => this.onMouseUp(e, cellIdx, cookieField.key)"
+      @blur="this.onBlur"
+      @keydown="onKey"
     />
     <input class="input-cell"
-           v-if="this.isCheckbox(cookieField)"
-           type="checkbox"
-           :checked="cookieField.value"
-           :data-key="cookieField.key"
-           tabindex="0"
-           @mouseup="(e) => this.onMouseUp(e, cellIdx)"
-           @blur="this.onBlur"
-           @keydown="onKey"
+      v-else-if="this.isCheckbox(cookieField)"
+      type="checkbox"
+      :checked="cookieField.value"
+      :data-key="cookieField.key"
+      tabindex="0"
+      @mouseup="(e) => this.onMouseUp(e, cellIdx, cookieField.key)"
+      @blur="this.onBlur"
+      @keydown="onKey"
+    />
+    <expiration-date-cell
+      v-if="this.isExpirationDateInput(cookieField)"
+      :expirationDateTimestamp="cookieField.value"
+      :cookieKey="cookieField.key"
+      tabindex="0"
+      :onMouseUp="(e) => onMouseUp(e, cellIdx, cookieField.key)"
+      :onBlur="onBlur"
+      :onKey="onKey"
     />
     <select class="input-cell"
-            v-if="this.isSelect(cookieField)"
-            :data-key="cookieField.key"
-            tabindex="0"
-            @mouseup="(e) => this.onMouseUp(e, cellIdx)"
-            @blur="this.onBlur"
-            @change="this.onSelectChange"
+      v-else-if="this.isSelect(cookieField)"
+      :data-key="cookieField.key"
+      tabindex="0"
+      @mouseup="(e) => this.onMouseUp(e, cellIdx, cookieField.key)"
+      @blur="this.onBlur"
+      @change="this.onSelectChange"
     >
       <option v-for="(text, value) in cookieField.enumValues"
-              :value="value"
-              :selected="cookieField.value === value"
+        :value="value"
+        :selected="cookieField.value === value"
       >
         {{ text }}
       </option>
     </select>
     <span class="immutable-cell"
-          v-if="!isMutableText(cookieField)"
-          tabindex="0"
-          @mouseup="(e) => this.onMouseUp(e, cellIdx)"
-          @blur="this.onBlur"
-          @keydown="onKey"
-          :title="getOutputImmutableText(cookieField)"
+      v-else-if="!isMutableText(cookieField)"
+      tabindex="0"
+      @mouseup="(e) => this.onMouseUp(e, cellIdx, cookieField.key)"
+      @blur="this.onBlur"
+      @keydown="onKey"
+      :title="getOutputImmutableText(cookieField)"
     >
-          {{ getOutputImmutableText(cookieField) }}
-        </span>
-  </template>
-  <template v-else>
-    <input class="input-cell"
-           v-if="this.isExpirationDateMutableInput(cookieField)"
-           type="text"
-           :value="this.formatExpirationDate(cookieField.value)"
-           :title="this.formatExpirationDate(cookieField.value)"
-           :data-key="cookieField.key"
-           tabindex="0"
-           @mouseup="(e) => this.onMouseUp(e, cellIdx)"
-           @blur="this.onBlur"
-           @keydown="onKey"
-    />
-    <span class="immutable-cell"
-          v-if="!this.isExpirationDateMutableInput(cookieField)"
-          tabindex="0"
-          @mouseup="(e) => this.onMouseUp(e, cellIdx)"
-          @blur="this.onBlur"
-          @keydown="onKey"
-    >
-          Session
-        </span>
+      {{ getOutputImmutableText(cookieField) }}
+    </span>
   </template>
 </template>
 
 <script>
-import moment from "moment/moment";
+import ExpirationDateCell from "./ExpirationDateCell";
 
 export default {
   name: "DynamicCell",
+  components: {ExpirationDateCell},
   props: {
     cookieField: Object,
     cellIdx: {
@@ -103,8 +91,8 @@ export default {
     },
   },
   methods: {
-    isStandardField(cookieField) {
-      return cookieField.key !== 'expirationDate' && cookieField.key !== 'session';
+    isRenderableField(cookieField) {
+      return cookieField.key !== 'session';
     },
     isInput(cookieField) {
       return this.isMutableText(cookieField) && cookieField.type === 'string';
@@ -121,12 +109,8 @@ export default {
     isMutableText(cookieField) {
       return cookieField.mutable;
     },
-    isExpirationDateMutableInput(cookieField) {
-      return cookieField.key === 'expirationDate' && !!cookieField.value;
-    },
-
-    formatExpirationDate(expirationDateTimestamp) {
-      return moment(expirationDateTimestamp * 1000).format('YYYY-MM-DD HH:mm:ss');
+    isExpirationDateInput(cookieField) {
+      return cookieField.key === 'expirationDate';
     },
     getOutputImmutableText(cookieField) {
       if (cookieField.key === 'secure') {
@@ -170,6 +154,7 @@ export default {
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
+      transition: box-shadow 150ms ease-in-out;
 
       &[type="text"] {
         height: 100%;

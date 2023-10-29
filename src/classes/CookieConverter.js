@@ -36,7 +36,7 @@ export default class CookieConverter {
         key: 'expirationDate',
         value: chromeCookie?.expirationDate,
         mutable: true,
-        type: 'string',
+        type: 'datetime',
       },
       session: {
         key: 'session',
@@ -87,7 +87,7 @@ export default class CookieConverter {
       url: `${protocol}://${validDomain}${object.path.value}`,
     };
 
-    if (object.session.value) {
+    if (object.session.value || object.expirationDate.value === undefined) {
       result.session = true;
     } else {
       result.expirationDate = object.expirationDate.value;

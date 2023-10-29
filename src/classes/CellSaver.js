@@ -10,7 +10,8 @@ export default class CellSaver {
     let { value } = target;
 
     if (cellKey === 'expirationDate') {
-      value = moment(value, 'YYYY-MM-DD HH:mm:ss').unix();
+      // when expiration is undefined, the cookie automatically becomes Session in Chrome API
+      value = value === 'Session' ? undefined : moment(value, 'YYYY-MM-DD HH:mm:ss').unix();
     }
 
     if (currentCookie[cellKey].type === 'bool') {
@@ -37,6 +38,11 @@ export default class CellSaver {
 
     const newCookieObject = { ...currentCookie };
     newCookieObject[cellKey].value = value;
+
+    if (newCookieObject.expirationDate.value !== undefined) {
+      newCookieObject.session.value = false;
+    }
+
     const newCookie = CookieConverter.objectToChromeCookie(newCookieObject);
 
     // Need a couple of adjustments for Chrome API cookie
