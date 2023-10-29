@@ -113,7 +113,7 @@ export default {
       }
 
       // clicked during focus outside the valid area, do unfocus
-      this.$store.dispatch('setSelectedCellIdx', -1);
+      this.$store.dispatch('setSelectedCell', { idx: -1, key: '' });
 
       // dirty hack to have selected cookie for removal
       // when user clicks on Delete Selected

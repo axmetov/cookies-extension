@@ -57,7 +57,10 @@ document.addEventListener('DOMContentLoaded', () => {
         uniqueHosts: [],
         selectedDomain: 'all hosts',
         filterValue: '',
-        selectedCellIdx: -1,
+        selectedCell: {
+          idx: -1,
+          key: '',
+        },
         selectedCookie: {},
         headers: [
           { name: 'Name', key: 'name' },
@@ -89,8 +92,9 @@ document.addEventListener('DOMContentLoaded', () => {
       setFilterValue(state, { filterValue }) {
         state.filterValue = filterValue;
       },
-      setSelectedCellIdx(state, { selectedCellIdx }) {
-        state.selectedCellIdx = selectedCellIdx;
+      setSelectedCell(state, { idx, key }) {
+        state.selectedCell.idx = idx;
+        state.selectedCell.key = key;
       },
       setSelectedCookie(state, { selectedCookie }) {
         state.selectedCookie = selectedCookie;
@@ -138,8 +142,8 @@ document.addEventListener('DOMContentLoaded', () => {
       setFilterValue(context, filterValue) {
         context.commit('setFilterValue', { filterValue });
       },
-      setSelectedCellIdx(context, selectedCellIdx) {
-        context.commit('setSelectedCellIdx', { selectedCellIdx });
+      setSelectedCell(context, { idx, key }) {
+        context.commit('setSelectedCell', { idx, key });
       },
       setSelectedCookie(context, selectedCookie) {
         context.commit('setSelectedCookie', { selectedCookie });
@@ -210,8 +214,8 @@ document.addEventListener('DOMContentLoaded', () => {
       selectedDomain(state) {
         return state.selectedDomain;
       },
-      selectedCellIdx(state) {
-        return state.selectedCellIdx;
+      selectedCell(state) {
+        return state.selectedCell;
       },
       selectedCookie(state) {
         return state.selectedCookie;

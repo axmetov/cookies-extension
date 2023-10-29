@@ -19,7 +19,7 @@
       </div>
     </div>
     <div id="data">
-      <cookie v-for="(cookieObject, idx) in data"
+      <cookie-row v-for="(cookieObject, idx) in data"
               :cookie-object="cookieObject"
               :idx="idx"
               :cell-widths="this.colWidths"
@@ -32,14 +32,14 @@
 </template>
 
 <script>
-import Cookie from "./Cookie";
 import {mapGetters} from "vuex";
 import SettingKeys from "../classes/SettingKeys";
 import hash from "object-hash";
+import CookieRow from "./CookieRow";
 
 export default {
   name: "DataTable",
-  components: {Cookie},
+  components: {CookieRow},
   props: {
     data: Array,
     onSortingChanged: Function,
@@ -63,7 +63,7 @@ export default {
     this.colWidths = this.settings[SettingKeys.HEADERS_WIDTHS];
   },
   computed: {
-    ...mapGetters(['headers', 'visibleHeaders', 'settings', 'selectedCookie', 'selectedCellIdx']),
+    ...mapGetters(['headers', 'visibleHeaders', 'settings', 'selectedCookie', 'selectedCell']),
   },
   methods: {
     handleDragging (e) {
@@ -118,8 +118,8 @@ export default {
       }
     },
     onArrowCookiesNavigation(newIdx) {
-      this.$refs.cookieRows[newIdx].$refs.cookieRow.querySelectorAll('div.cell')[this.selectedCellIdx].querySelector(':not(.divider)').focus();
-      this.$refs.cookieRows[newIdx].$refs.cookieRow.querySelectorAll('div.cell')[this.selectedCellIdx].querySelector(':not(.divider)').dispatchEvent(new Event('mouseup'));
+      this.$refs.cookieRows[newIdx].$refs.cookieRow.querySelectorAll('div.cell')[this.selectedCell.idx].querySelector(':not(.divider)').focus();
+      this.$refs.cookieRows[newIdx].$refs.cookieRow.querySelectorAll('div.cell')[this.selectedCell.idx].querySelector(':not(.divider)').dispatchEvent(new Event('mouseup'));
     },
   },
   watch: {

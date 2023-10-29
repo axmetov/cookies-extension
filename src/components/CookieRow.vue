@@ -1,27 +1,32 @@
 <template>
-  <div class="cookie"
-       :class="{focused: cookieHash === selectedCookieHash}"
-       ref="cookieRow"
-       :data-hash="cookieHash"
-  >
-    <div class="cell"
-         v-for="(cookieField, cookieFieldKey, cellIdx) in this.cookieWithVisibleFields"
-         :style="{width: `${this.cellWidths[cellIdx]}%`}"
+  <Transition name="feedback">
+    <div class="cookie"
+         :class="{
+           focused: cookieHash === selectedCookieHash,
+           'positive-feedback': isPositiveFeedback,
+         }"
+         ref="cookieRow"
+         :data-hash="cookieHash"
     >
-      <span class="divider"
-            v-if="cellIdx > 0"
-            @mousedown="this.startDragging(cellIdx)"
-      ></span>
+      <div class="cell"
+           v-for="(cookieField, cookieFieldKey, cellIdx) in this.cookieWithVisibleFields"
+           :style="{width: `${this.cellWidths[cellIdx]}%`}"
+      >
+        <span class="divider"
+              v-if="cellIdx > 0"
+              @mousedown="this.startDragging(cellIdx)"
+        ></span>
 
-      <dynamic-cell :cookie-field="cookieField"
-                    :cell-idx="cellIdx"
-                    :on-mouse-up="this.onMouseUp"
-                    :on-blur="this.onBlur"
-                    :on-select-change="this.onSelectChange"
-                    :on-key="this.onKey"
-      />
+        <dynamic-cell :cookie-field="cookieField"
+                      :cell-idx="cellIdx"
+                      :on-mouse-up="this.onMouseUp"
+                      :on-blur="this.onBlur"
+                      :on-select-change="this.onSelectChange"
+                      :on-key="this.onKey"
+        />
+      </div>
     </div>
-  </div>
+  </Transition>
 </template>
 
 <script>
@@ -32,7 +37,7 @@ import SettingKeys from "../classes/SettingKeys";
 import hash from 'object-hash';
 
 export default {
-  name: "Cookie",
+  name: "CookieRow",
   components: {DynamicCell},
   props: {
     cookieObject: Object,
@@ -45,10 +50,11 @@ export default {
     return {
       skipSaveOnBlur: false,
       inputValueBeforeEditStarted: '',
+      isPositiveFeedback: false,
     };
   },
   computed: {
-    ...mapGetters(['hostsTree', 'selectedCookie', 'selectedCellIdx', 'headers', 'settings', 'filteredCookies']),
+    ...mapGetters(['hostsTree', 'selectedCookie', 'headers', 'settings', 'filteredCookies']),
     cookieWithVisibleFields() {
       const cookie = {...this.cookieObject};
       delete cookie.session;
@@ -69,8 +75,8 @@ export default {
     },
   },
   methods: {
-    onMouseUp(e, cellIdx) {
-      this.$store.dispatch('setSelectedCellIdx', cellIdx);
+    onMouseUp(e, cellIdx, cookieKey) {
+      this.$store.dispatch('setSelectedCell', { idx: cellIdx, key: cookieKey });
       this.$store.dispatch('setSelectedCookie', this.cookieObject);
 
       this.inputValueBeforeEditStarted = e.target?.value;
@@ -78,7 +84,6 @@ export default {
     async onBlur(e) {
       if (this.skipSaveOnBlur) {
         this.skipSaveOnBlur = false;
-        e.target.value = this.inputValueBeforeEditStarted;
         return;
       }
 
@@ -87,20 +92,24 @@ export default {
     async onSelectChange(e) {
       await CellSaver.saveCellValue(e.target.dataset.key, e.target, this.cookieObject, this.$store);
     },
-    async onKey(e) {
+    onKey(e) {
       if (e.code === 'Enter') {
+        this.$store.dispatch('setSelectedCookie', {});
         e.target.blur();
+        // visual feedback on successful save
+        this.isPositiveFeedback = true;
+        setTimeout(() => this.isPositiveFeedback = false, 300);
       } else if (e.code === 'Escape') {
         this.skipSaveOnBlur = true;
+        e.target.value = this.inputValueBeforeEditStarted;
+        this.$store.dispatch('setSelectedCookie', {});
         e.target.blur();
       } else if (e.code === 'ArrowUp') {
         if (this.idx > 0) {
-          //e.target.blur();
           this.onArrowNavigation(this.idx - 1);
         }
       } else if (e.code === 'ArrowDown') {
         if (this.idx < this.filteredCookies.length - 1) {
-          ///e.target.blur();
           this.onArrowNavigation(this.idx + 1);
         }
       }
@@ -133,6 +142,10 @@ export default {
       background-color: #b3d5fe;
     }
 
+    &.positive-feedback div.cell {
+      background-color: #b1f69f;
+    }
+
     div.cell {
       position: relative;
       border-right: 1px solid #ddd;
@@ -140,6 +153,7 @@ export default {
       display: flex;
       align-items: center;
       padding: 1px 0 1px 1px;
+      transition: background-color 200ms ease-in-out;
 
       &:last-of-type {
         border-right: none;

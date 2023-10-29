@@ -1,6 +1,7 @@
 <template>
   <div id="cookie-viewer"
        :style="{ height: `${100 - this.height}%` }"
+       :class="{'positive-feedback': isPositiveFeedback}"
   >
     <div id="manage-panel">
       <button class="delete-cookie manage-button" @click="onDeleteButton">🗑️ Delete</button>
@@ -13,7 +14,7 @@
     <div id="fields">
       <template v-for="header in headers">
         <span class="col-name">{{ header.name }}</span>
-        <dynamic-cell :cookie-field="selectedCookie[header.key]"
+        <dynamic-cell :cookie-field="this.selectedCookie[header.key]"
                       :on-mouse-up="onMouseUp"
                       :on-blur="onBlur"
                       :on-select-change="onSelectChange"
@@ -50,6 +51,7 @@ export default {
       inputValueBeforeEditStarted: '',
       isSaved: false,
       savedMarkTransitionTime: 1000,
+      isPositiveFeedback: false,
     };
   },
   computed: {
@@ -62,7 +64,6 @@ export default {
     async onBlur(e) {
       if (this.skipSaveOnBlur) {
         this.skipSaveOnBlur = false;
-        e.target.value = this.inputValueBeforeEditStarted;
         return;
       }
 
@@ -71,11 +72,17 @@ export default {
     async onSelectChange(e) {
       await CellSaver.saveCellValue(e.target.dataset.key, e.target, this.selectedCookie, this.$store);
     },
-    async onKey(e) {
-      if (e.code === 'Enter' && e.target.type !== 'textarea') {
+    onKey(e) {
+      const isSubmit = e.code === 'Enter' && (e.target.type !== 'textarea' || e.ctrlKey);
+
+      if (isSubmit) {
         e.target.blur();
+        // visual feedback on successful save
+        this.isPositiveFeedback = true;
+        setTimeout(() => this.isPositiveFeedback = false, 200);
       } else if (e.code === 'Escape') {
         this.skipSaveOnBlur = true;
+        e.target.value = this.inputValueBeforeEditStarted;
         e.target.blur();
       }
     },
@@ -87,7 +94,7 @@ export default {
         url: chromeCookie.url
       });
 
-      this.$store.dispatch('setSelectedCellIdx', -1);
+      this.$store.dispatch('setSelectedCell', { idx: -1, key: '' });
       this.$store.dispatch('setSelectedCookie', {});
     },
     onSaveButton() {
@@ -95,7 +102,7 @@ export default {
       setTimeout(() => this.isSaved = false, this.savedMarkTransitionTime);
     },
     onCloseButton() {
-      this.$store.dispatch('setSelectedCellIdx', -1);
+      this.$store.dispatch('setSelectedCell', { idx: -1, key: '' });
       this.$store.dispatch('setSelectedCookie', {});
     },
   },
@@ -109,6 +116,11 @@ export default {
     box-sizing: border-box;
     border-top: 1px solid #ccc;
     overflow: auto;
+    transition: background-color 150ms ease-in-out;
+
+    &.positive-feedback {
+      background-color: #e7ffdf;
+    }
 
     .fade-enter-active,
     .fade-leave-active {
