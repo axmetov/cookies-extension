@@ -1,7 +1,6 @@
 <template>
   <div id="cookie-viewer"
        :style="{ height: `${100 - this.height}%` }"
-       :class="{'positive-feedback': isPositiveFeedback}"
   >
     <div id="manage-panel">
       <button class="delete-cookie manage-button" @click="onDeleteButton">🗑️ Delete</button>
@@ -51,7 +50,6 @@ export default {
       inputValueBeforeEditStarted: '',
       isSaved: false,
       savedMarkTransitionTime: 1000,
-      isPositiveFeedback: false,
     };
   },
   computed: {
@@ -77,9 +75,6 @@ export default {
 
       if (isSubmit) {
         e.target.blur();
-        // visual feedback on successful save
-        this.isPositiveFeedback = true;
-        setTimeout(() => this.isPositiveFeedback = false, 200);
       } else if (e.code === 'Escape') {
         this.skipSaveOnBlur = true;
         e.target.value = this.inputValueBeforeEditStarted;
@@ -116,11 +111,6 @@ export default {
     box-sizing: border-box;
     border-top: 1px solid #ccc;
     overflow: auto;
-    transition: background-color 150ms ease-in-out;
-
-    &.positive-feedback {
-      background-color: #e7ffdf;
-    }
 
     .fade-enter-active,
     .fade-leave-active {

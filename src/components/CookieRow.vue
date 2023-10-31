@@ -1,32 +1,27 @@
 <template>
-  <Transition name="feedback">
-    <div class="cookie"
-         :class="{
-           focused: cookieHash === selectedCookieHash,
-           'positive-feedback': isPositiveFeedback,
-         }"
-         ref="cookieRow"
-         :data-hash="cookieHash"
+  <div class="cookie"
+       :class="{focused: cookieHash === selectedCookieHash}"
+       ref="cookieRow"
+       :data-hash="cookieHash"
+  >
+    <div class="cell"
+         v-for="(cookieField, cookieFieldKey, cellIdx) in this.cookieWithVisibleFields"
+         :style="{width: `${this.cellWidths[cellIdx]}%`}"
     >
-      <div class="cell"
-           v-for="(cookieField, cookieFieldKey, cellIdx) in this.cookieWithVisibleFields"
-           :style="{width: `${this.cellWidths[cellIdx]}%`}"
-      >
-        <span class="divider"
-              v-if="cellIdx > 0"
-              @mousedown="this.startDragging(cellIdx)"
-        ></span>
+      <span class="divider"
+            v-if="cellIdx > 0"
+            @mousedown="this.startDragging(cellIdx)"
+      ></span>
 
-        <dynamic-cell :cookie-field="cookieField"
-                      :cell-idx="cellIdx"
-                      :on-mouse-up="this.onMouseUp"
-                      :on-blur="this.onBlur"
-                      :on-select-change="this.onSelectChange"
-                      :on-key="this.onKey"
-        />
-      </div>
+      <dynamic-cell :cookie-field="cookieField"
+                    :cell-idx="cellIdx"
+                    :on-mouse-up="this.onMouseUp"
+                    :on-blur="this.onBlur"
+                    :on-select-change="this.onSelectChange"
+                    :on-key="this.onKey"
+      />
     </div>
-  </Transition>
+  </div>
 </template>
 
 <script>
@@ -50,7 +45,6 @@ export default {
     return {
       skipSaveOnBlur: false,
       inputValueBeforeEditStarted: '',
-      isPositiveFeedback: false,
     };
   },
   computed: {
@@ -96,9 +90,6 @@ export default {
       if (e.code === 'Enter') {
         this.$store.dispatch('setSelectedCookie', {});
         e.target.blur();
-        // visual feedback on successful save
-        this.isPositiveFeedback = true;
-        setTimeout(() => this.isPositiveFeedback = false, 300);
       } else if (e.code === 'Escape') {
         this.skipSaveOnBlur = true;
         e.target.value = this.inputValueBeforeEditStarted;
@@ -142,10 +133,6 @@ export default {
       background-color: #b3d5fe;
     }
 
-    &.positive-feedback div.cell {
-      background-color: #b1f69f;
-    }
-
     div.cell {
       position: relative;
       border-right: 1px solid #ddd;
@@ -153,7 +140,6 @@ export default {
       display: flex;
       align-items: center;
       padding: 1px 0 1px 1px;
-      transition: background-color 200ms ease-in-out;
 
       &:last-of-type {
         border-right: none;
