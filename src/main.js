@@ -120,7 +120,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         for (let i = 0; i < allCookies.length; i++) {
           const stateCookie = allCookies[i];
-          if (stateCookie.name === newCookie.name && stateCookie.domain === newCookie.domain) {
+          if (
+              stateCookie.name === newCookie.name
+              && stateCookie.domain === newCookie.domain
+              && stateCookie.path === newCookie.path
+          ) {
             allCookies[i] = newCookie;
             updated = true;
           }
