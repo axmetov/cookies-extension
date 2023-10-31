@@ -11,7 +11,8 @@
              @click="onRefresh"
         >⭮</div>
         <div id="filter">
-          <input type="text" placeholder="Filter" @input="onFilter" />
+          <input type="text" placeholder="Filter" @input="onFilter" ref="filterInput" />
+          <span id="clear-filter-btn" title="Clear filter" @click="onClearFilterClick">×</span>
         </div>
         <div id="delete-all-btn"
              class="btn"
@@ -178,6 +179,10 @@ export default {
       this.$store.dispatch('setSelectedDomain', 'all hosts');
       this.$store.dispatch('setFilterValue', e.target.value);
     },
+    onClearFilterClick() {
+      this.$refs.filterInput.value = '';
+      this.$store.dispatch('setFilterValue', '');
+    },
     onHeaderVisibilityChange(key) {
       let hiddenHeaders = [...this.settings[SettingKeys.HIDDEN_HEADERS]];
       if (hiddenHeaders.indexOf(key) >= 0) {
@@ -263,6 +268,24 @@ export default {
 
         #filter {
           margin-right: 5px;
+          position: relative;
+
+          span#clear-filter-btn {
+            position: absolute;
+            right: 5px;
+            font-size: 18px;
+            line-height: 18px;
+            color: #757575;
+            cursor: pointer;
+
+            &:hover {
+              color: #aaa;
+            }
+
+            &:active {
+              color: #333;
+            }
+          }
         }
 
         .btn {
