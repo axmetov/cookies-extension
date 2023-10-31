@@ -15,7 +15,8 @@
         <span class="divider" v-if="idx > 0" @mousedown="startDragging(idx)"></span>
         <span class="header-name" :title="header.name">{{ header.name }}</span>
         <span class="sorting-indicator" v-if="this.sortingOrder === 'asc' && this.sortingField === header.key">▲</span>
-        <span class="sorting-indicator" v-if="this.sortingOrder === 'desc' && this.sortingField === header.key">▼</span>
+        <span class="sorting-indicator" v-else-if="this.sortingOrder === 'desc' && this.sortingField === header.key">▼</span>
+        <span class="sorting-indicator disabled" v-else>▲▼</span>
       </div>
     </div>
     <div id="data">
@@ -185,13 +186,14 @@ export default {
       .column {
         box-sizing: border-box;
         width: 10%;
-        padding: 3px 0 3px 4px;
+        padding: 3px 4px;
         border-right: 1px solid #ccc;
         cursor: pointer;
         position: relative;
         white-space: nowrap;
         display: inline-flex;
         align-items: center;
+        justify-content: space-between;
 
         &:hover {
           background-color: rgba(0, 0, 0, .1);
@@ -216,6 +218,10 @@ export default {
           font-size: .75em;
           min-width: 10px;
           text-align: right;
+
+          &.disabled {
+            color: #ccc;
+          }
         }
       }
     }
