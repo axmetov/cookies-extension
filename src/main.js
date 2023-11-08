@@ -43,7 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const allCookies = (await Promise.all(allCookiesPromises)).flat();
 
-    const uniqueHosts = [...new Set(allCookies.map(cookie => cookie.domain.startsWith('.') ? cookie.domain.substring(1) : cookie.domain))];
+    const mapperFn = (cookie) => (cookie.domain.startsWith('.') ? cookie.domain.substring(1) : cookie.domain);
+    const uniqueHosts = [...new Set(allCookies.map(mapperFn))];
     await store.commit('setUniqueHosts', { uniqueHosts });
     await store.dispatch('updateAllCookies', allCookies);
   }
@@ -121,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < allCookies.length; i++) {
           const stateCookie = allCookies[i];
           if (
-              stateCookie.name === newCookie.name
+            stateCookie.name === newCookie.name
               && stateCookie.domain === newCookie.domain
               && stateCookie.path === newCookie.path
           ) {
@@ -161,21 +162,25 @@ document.addEventListener('DOMContentLoaded', () => {
         await context.dispatch('updateAllCookies', cookiesWithoutRemoved);
       },
       async deleteCookiesByUrl(context, { url }) {
-        const toNotPrefixedUrl = url => url.startsWith('.') ? url.slice(1) : url;
+        const toNotPrefixedUrl = (prefixedUrl) => (prefixedUrl.startsWith('.') ? prefixedUrl.slice(1) : prefixedUrl);
         const notPrefixedUrl = toNotPrefixedUrl(url);
 
         const domainRegexp = new RegExp(`.*\\.${notPrefixedUrl.replace('.', '\\.')}$`);
         const cookiesToRemove = url === 'all hosts'
           ? [...context.state.hostsTree.cookies]
           : context.state.hostsTree.cookies.filter(
-            cookie => cookie.domain === url || domainRegexp.test(cookie.domain)
+            (cookie) => cookie.domain === url || domainRegexp.test(cookie.domain),
           );
 
         const removePromises = [];
         for (const cookie of cookiesToRemove) {
           // try both schemes
-          removePromises.push(chrome.cookies.remove({ name: cookie.name, url: `http://${toNotPrefixedUrl(cookie.domain)}` }));
-          removePromises.push(chrome.cookies.remove({ name: cookie.name, url: `https://${toNotPrefixedUrl(cookie.domain)}` }));
+          removePromises.push(
+            chrome.cookies.remove({ name: cookie.name, url: `http://${toNotPrefixedUrl(cookie.domain)}` }),
+          );
+          removePromises.push(
+            chrome.cookies.remove({ name: cookie.name, url: `https://${toNotPrefixedUrl(cookie.domain)}` }),
+          );
         }
 
         await Promise.all(removePromises);
