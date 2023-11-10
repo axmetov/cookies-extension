@@ -1,14 +1,15 @@
 {
   "name": "cookies-extension",
-  "version": "1.0.0",
-  "description": "A little helper to make your work with cookies easier.",
+  "version": "1.2.0",
+  "description": "Cookies Extension to get the best of dev-tools experience. Edit decoded value in editor, control columns of table, filter by domain.",
   "main": "index.js",
   "scripts": {
     "cs": "npx eslint --fix --color src/",
     "build": "webpack --config webpack.config.js",
-    "watch": "webpack --config webpack.config.js --watch"
+    "watch": "webpack --config webpack.config.js --watch",
+    "deploy": "node ./build-zip.js"
   },
-  "author": "Ildar Akhmetov",
+  "author": "Ildar Akhmetov <ildar.axmetov@gmail.com>",
   "license": "GPL-3.0-or-later",
   "devDependencies": {
     "@babel/core": "^7.21.3",
