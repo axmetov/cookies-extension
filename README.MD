@@ -39,6 +39,11 @@ This Cookie Extension doesn't send or share your cookies. Your privacy is sacred
 5. Enjoy!
 6. Check your code with Eslint before pushing `npm run cs`
 
+## CI
+
+Let's call this CI 😁 Run `npm run deploy` to build an extension's zip.
+
 ## Known Limitations
+
 - `Secure` is not updatable - this is a limitation in the native Chrome's cookie manager. It's likely dictated by the fact that you cannot change Secure without changing the host from `https` to `http`.
 - SameSite cannot be set to None - don't know why, but you can't do it even in the native Chrome's cookies panel.
