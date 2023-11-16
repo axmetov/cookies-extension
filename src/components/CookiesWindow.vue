@@ -9,7 +9,11 @@
              class="btn"
              title="Refresh"
              @click="onRefresh"
-        >⭮</div>
+        >
+          <svg height="19" viewBox="0 -960 960 960" width="19">
+            <path d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z"/>
+          </svg>
+        </div>
         <div id="filter">
           <input type="text" placeholder="Filter" @input="onFilter" ref="filterInput" />
           <span id="clear-filter-btn" title="Clear filter" @click="onClearFilterClick">×</span>
@@ -19,7 +23,11 @@
              :class="{ disabled: !this.isThereAnyCookie }"
              title="Delete All for the Selected Host"
              @click="onDeleteAll"
-        ><span>✕</span></div>
+        >
+          <svg height="19" viewBox="0 -960 960 960" width="19">
+            <path d="m576-80-56-56 104-104-104-104 56-56 104 104 104-104 56 56-104 104 104 104-56 56-104-104L576-80ZM120-320v-80h280v80H120Zm0-160v-80h440v80H120Zm0-160v-80h440v80H120Z"/>
+          </svg>
+        </div>
         <div id="delete-selected-btn"
              class="btn"
              :class="{ disabled: !this.isCookieSelected }"
@@ -329,39 +337,8 @@ export default {
           &#delete-all-btn {
             position: relative;
 
-            &:before {
-              content: "";
-              position: absolute;
-              width: 40%;
-              height: 15%;
-              border-top: 2px solid #333;
-              border-bottom: 2px solid #333;
-              top: 23%;
-              left: 25%;
-              z-index: 0;
-            }
-
-            span {
-              font-size: 10px;
-              font-weight: bolder;
-              color: #de0000;
-              position: absolute;
-              z-index: 1;
-              bottom: 5%;
-              text-shadow: 0 0 1px #de0000;
-              background-color: #f1f3f4;
-              line-height: 12px;
-            }
-
-            &:after {
-              content: "";
-              position: absolute;
-              width: 40%;
-              height: 20%;
-              border-bottom: 2px solid #777777;
-              top: 50%;
-              z-index: 0;
-              left: 25%
+            path {
+              fill: #de0000;
             }
           }
         }
