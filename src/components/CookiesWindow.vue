@@ -89,6 +89,7 @@ export default {
       sortingOrder: 'asc',
       dividerPosition: 0,
       isDividing: false,
+      isCompactTree: false,
     };
   },
   mounted() {
@@ -98,6 +99,7 @@ export default {
     window.addEventListener('endDragging', this.setRightWrapperHeight);
 
     this.dividerPosition = this.settings[SettingKeys.COOKIE_VIEWER_DIVIDER_POSITION];
+    this.isCompactTree = this.settings[SettingKeys.HOSTS_TREE_COMPACT_TREE];
 
     this.setRightWrapperHeight();
   },
@@ -127,7 +129,16 @@ export default {
       return cookies;
     },
     tableData() {
-      return this.sortedFilteredCookies.map(cookie => CookieConverter.chromeCookieToObject(cookie));
+      let cookies = this.sortedFilteredCookies.map(cookie => CookieConverter.chromeCookieToObject(cookie));
+
+      // remove non-direct cookies for host
+      if (this.isCompactTree) {
+        cookies = cookies.filter(
+            cookie => cookie.domain.value === this.selectedDomain || this.selectedDomain === 'all hosts'
+        );
+      }
+
+      return cookies;
     },
     isCookieSelected() {
       return Object.keys(this.selectedCookie).length > 0;
@@ -239,7 +250,12 @@ export default {
   watch: {
     isCookieSelected(newValue, oldValue) {
       this.setRightWrapperHeight();
-    }
+    },
+    settings(newSettings, oldSettings) {
+      if (newSettings[SettingKeys.HOSTS_TREE_COMPACT_TREE] !== oldSettings[SettingKeys.HOSTS_TREE_COMPACT_TREE]) {
+        this.isCompactTree = newSettings[SettingKeys.HOSTS_TREE_COMPACT_TREE];
+      }
+    },
   },
 }
 </script>
