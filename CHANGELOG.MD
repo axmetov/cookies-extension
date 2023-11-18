@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.1
+### Changed
+- Icons are SVGs now
+
+### Fixed
+- Compact tree shows only direct cookies
+
 ## 1.2.0
 ### Added
 - "Delete All Cookies for the Chosen Host" button

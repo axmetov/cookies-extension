@@ -1,6 +1,6 @@
 {
   "name": "cookies-extension",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Cookies Extension to get the best of dev-tools experience. Edit decoded value in editor, control columns of table, filter by domain.",
   "main": "index.js",
   "scripts": {
