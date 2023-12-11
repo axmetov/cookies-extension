@@ -153,7 +153,7 @@ export default {
 
     button.manage-button {
       border-radius: 3px;
-      border: none;
+      border: 1px solid rgba(0,0,0,0.03);
       padding: 3px 7px 3px 4px;
       cursor: pointer;
       box-sizing: border-box;
