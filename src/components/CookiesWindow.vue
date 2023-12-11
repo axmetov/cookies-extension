@@ -10,7 +10,7 @@
              title="Refresh"
              @click="onRefresh"
         >
-          <svg height="19" viewBox="0 -960 960 960" width="19">
+          <svg height="20" viewBox="0 -960 960 960" width="20">
             <path d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z"/>
           </svg>
         </div>
@@ -24,8 +24,8 @@
              title="Delete All for the Selected Host"
              @click="onDeleteAll"
         >
-          <svg height="19" viewBox="0 -960 960 960" width="19">
-            <path d="m576-80-56-56 104-104-104-104 56-56 104 104 104-104 56 56-104 104 104 104-56 56-104-104L576-80ZM120-320v-80h280v80H120Zm0-160v-80h440v80H120Zm0-160v-80h440v80H120Z"/>
+          <svg height="24" viewBox="0 -960 960 960" width="24">
+            <path d="M600-240v-80h160v80H600Zm0-320v-80h280v80H600Zm0 160v-80h240v80H600ZM120-640H80v-80h160v-60h160v60h160v80h-40v360q0 33-23.5 56.5T440-200H200q-33 0-56.5-23.5T120-280v-360Zm80 0v360h240v-360H200Zm0 0v360-360Z"/>
           </svg>
         </div>
         <div id="delete-selected-btn"
@@ -33,7 +33,11 @@
              :class="{ disabled: !this.isCookieSelected }"
              title="Delete Selected"
              @click="onDelete"
-        >✕</div>
+        >
+          <svg height="20" viewBox="0 -960 960 960" width="20">
+            <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
+          </svg>
+        </div>
       </div>
       <div class="row">
         <div id="columns-filter">
@@ -294,11 +298,18 @@ export default {
           margin-right: 5px;
           position: relative;
 
+          input {
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            padding: 3px;
+          }
+
           span#clear-filter-btn {
             position: absolute;
             right: 5px;
-            font-size: 18px;
-            line-height: 18px;
+            font-size: 19px;
+            line-height: 19px;
             color: #757575;
             cursor: pointer;
 
@@ -314,26 +325,28 @@ export default {
 
         .btn {
           width: 30px;
-          font-size: 14px;
-          text-align: center;
+          height: 24px;
           user-select: none;
+          border-radius: 3px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
 
           &:not(.disabled) { // active button
             cursor: pointer;
 
             &:hover {
-              box-shadow: 0 0 1px black;
-              background-color: rgba(255, 255, 255, .5);
+              background-color: rgba(255, 255, 255, .7);
             }
 
             &:active {
-              box-shadow: 0 0 1px black inset;
               background-color: rgba(0, 0, 0, .1);
             }
 
             &#delete-selected-btn {
-              color: #de0000;
-              text-shadow: 0 0 1px #de0000;
+              path {
+                fill: #de0000;
+              }
             }
           }
 
@@ -341,13 +354,18 @@ export default {
             margin-right: 5px;
             font-size: 18px;
             line-height: 19px;
+
+            path {
+              fill: #555;
+            }
           }
 
           &#delete-selected-btn {
             margin-left: 5px;
-            color: #aaa;
-            text-shadow: 0 0 1px #aaa;
-            font-weight: bold;
+
+            path {
+              fill: #aaa;
+            }
           }
 
           &#delete-all-btn {

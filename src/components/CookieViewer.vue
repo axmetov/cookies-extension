@@ -3,8 +3,18 @@
        :style="{ height: `${100 - this.height}%` }"
   >
     <div id="manage-panel">
-      <button class="delete-cookie manage-button" @click="onDeleteButton">🗑️ Delete</button>
-      <button class="save-cookie manage-button" @click="onSaveButton">✔ Save</button>
+      <button class="delete-cookie manage-button" @click="onDeleteButton">
+        <svg height="18" viewBox="0 -960 960 960" width="18">
+          <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
+        </svg>
+        <span>Delete</span>
+      </button>
+      <button class="save-cookie manage-button" @click="onSaveButton">
+        <svg height="18" viewBox="0 -960 960 960" width="18">
+          <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/>
+        </svg>
+        <span>Save</span>
+      </button>
       <Transition name="fade">
         <span class="saved-mark" v-if="isSaved">Saved ✔</span>
       </Transition>
@@ -23,11 +33,21 @@
       </template>
     </div>
     <div class="buttons-row">
+      <button class="delete-cookie manage-button" @click="onDeleteButton">
+        <svg height="18" viewBox="0 -960 960 960" width="18">
+          <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
+        </svg>
+        <span>Delete</span>
+      </button>
+      <button class="save-cookie manage-button" @click="onSaveButton">
+        <svg height="18" viewBox="0 -960 960 960" width="18">
+          <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/>
+        </svg>
+        <span>Save</span>
+      </button>
       <Transition name="fade">
         <span class="saved-mark" v-if="isSaved">Saved ✔</span>
       </Transition>
-      <button class="delete-cookie manage-button" @click="onDeleteButton">🗑️ Delete</button>
-      <button class="save-cookie manage-button" @click="onSaveButton">✔ Save</button>
     </div>
   </div>
 </template>
@@ -132,50 +152,47 @@ export default {
     }
 
     button.manage-button {
-      background: white;
       border-radius: 3px;
-      padding: 3px 5px;
+      border: none;
+      padding: 3px 7px 3px 4px;
       cursor: pointer;
       box-sizing: border-box;
+      display: flex;
+      justify-content: center;
+      align-items: center;
 
       &:active {
-        border-width: 2px;
-        padding: 2px 4px;
+        background-color: rgba(0, 0, 0, .1)!important;
       }
 
       &.delete-cookie {
-        border: 1px solid #833;
-        color: #833;
+        background-color: #ffeaea;
 
         &:hover {
-          background-color: #fffafafa;
-          border-color: #a55;
-          color: #a55;
+          background-color: #fff3f3;
         }
 
-        &:active {
-          background-color: #caa;
-          border-color: #500;
-          color: #500;
+        path {
+          fill: #de0000;
         }
       }
 
       &.save-cookie {
-        border: 1px solid #33883e;
-        color: #33883e;
+        background-color: #e1ffe6;
         margin-left: 5px;
 
         &:hover {
-          background-color: #FFFAFAF9;
-          border-color: #5baa55;
-          color: #5baa55;
+          background-color: #eefff1;
         }
 
-        &:active {
-          background-color: #afccaa;
-          border-color: #095500;
-          color: #095500;
+        path {
+          fill: #17a101;
         }
+      }
+
+      span {
+        margin-left: 3px;
+        color: #333;
       }
     }
 
@@ -244,16 +261,10 @@ export default {
     }
 
     div.buttons-row {
-      text-align: right;
+      display: flex;
       margin-top: 15px;
       margin-bottom: 10px;
       padding-right: 25px;
-
-      button.save-cookie {
-        &:active {
-          margin-left: 7px;
-        }
-      }
     }
   }
 </style>
