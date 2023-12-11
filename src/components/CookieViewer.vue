@@ -22,13 +22,19 @@
     </div>
     <div id="fields">
       <template v-for="header in headers">
-        <span class="col-name">{{ header.name }}</span>
+        <label
+            :for="`e-${this.selectedCookie[header.key].key}`"
+            class="col-name"
+        >
+          {{ header.name }}
+        </label>
         <dynamic-cell :cookie-field="this.selectedCookie[header.key]"
                       :on-mouse-up="onMouseUp"
                       :on-blur="onBlur"
                       :on-select-change="onSelectChange"
                       :on-key="onKey"
                       :value-as-textarea="header.key === 'value'"
+                      place="editor"
         />
       </template>
     </div>
@@ -146,7 +152,7 @@ export default {
       display: inline-flex;
       align-items: center;
       height: 25px;
-      margin-right: 10px;
+      margin-left: 10px;
       color: #358940;
       font-size: 14px;
     }
@@ -154,7 +160,7 @@ export default {
     button.manage-button {
       border-radius: 3px;
       border: 1px solid rgba(0,0,0,0.03);
-      padding: 3px 7px 3px 4px;
+      padding: 4px 10px 4px 7px;
       cursor: pointer;
       box-sizing: border-box;
       display: flex;
@@ -166,10 +172,14 @@ export default {
       }
 
       &.delete-cookie {
-        background-color: #ffeaea;
+        background-color: #ffdbdb;
+        border-right-color: #e7c1c1;
+        border-bottom-color: #e7c1c1;
 
         &:hover {
-          background-color: #fff3f3;
+          background-color: #e7c1c1;
+          border-right-color: #d9b1b1;
+          border-bottom-color: #d9b1b1;
         }
 
         path {
@@ -178,11 +188,15 @@ export default {
       }
 
       &.save-cookie {
-        background-color: #e1ffe6;
+        background-color: #b3ffb3;
+        border-right-color: #9be09b;
+        border-bottom-color: #9be09b;
         margin-left: 5px;
 
         &:hover {
-          background-color: #eefff1;
+          background-color: #9be09b;
+          border-right-color: #8ccb8c;
+          border-bottom-color: #8ccb8c;
         }
 
         path {
@@ -198,6 +212,7 @@ export default {
 
     div#manage-panel {
       text-align: right;
+      margin-bottom: 10px;
 
       button.manage-button {
         float: left;
@@ -233,13 +248,14 @@ export default {
       display: grid;
       grid-template-columns: 1fr 8fr;
       grid-template-rows: repeat(9, auto);
-      grid-gap: 4px 0;
-      align-items: center;
+      grid-gap: 6px 4px;
+      align-items: baseline;
       box-sizing: border-box;
-      padding-right: 25px;
+      padding-right: 20px;
+      padding-left: 5px;
 
-      span.col-name {
-        align-self: baseline;
+      label.col-name {
+        min-height: 22px;
       }
 
       :deep(.input-cell) {
@@ -247,9 +263,10 @@ export default {
         border-radius: 3px;
 
         &[type="checkbox"] {
-          margin: 0;
           width: 20px;
-          align-self: center;
+          height: 15px;
+          margin: 2px 0 0;
+          align-self: normal;
         }
       }
 

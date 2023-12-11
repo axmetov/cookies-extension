@@ -19,6 +19,7 @@
                     :on-blur="this.onBlur"
                     :on-select-change="this.onSelectChange"
                     :on-key="this.onKey"
+                    place="reader"
       />
     </div>
   </div>

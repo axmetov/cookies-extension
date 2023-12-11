@@ -6,6 +6,7 @@
       :value="cookieField.value"
       :title="cookieField.value"
       :data-key="cookieField.key"
+      :id="this.getCellId(cookieField.key)"
       tabindex="0"
       @mouseup="(e) => this.onMouseUp(e, cellIdx, cookieField.key)"
       @blur="this.onBlur"
@@ -16,6 +17,7 @@
       :value="this.formatValueForTextarea(cookieField.value)"
       :title="this.formatValueForTextarea(cookieField.value)"
       :data-key="cookieField.key"
+      :id="this.getCellId(cookieField.key)"
       tabindex="0"
       rows="10"
       @mouseup="(e) => this.onMouseUp(e, cellIdx, cookieField.key)"
@@ -27,6 +29,7 @@
       type="checkbox"
       :checked="cookieField.value"
       :data-key="cookieField.key"
+      :id="this.getCellId(cookieField.key)"
       tabindex="0"
       @mouseup="(e) => this.onMouseUp(e, cellIdx, cookieField.key)"
       @blur="this.onBlur"
@@ -36,6 +39,7 @@
       v-if="this.isExpirationDateInput(cookieField)"
       :expirationDateTimestamp="cookieField.value"
       :cookieKey="cookieField.key"
+      :id="this.getCellId(cookieField.key)"
       tabindex="0"
       :onMouseUp="(e) => onMouseUp(e, cellIdx, cookieField.key)"
       :onBlur="onBlur"
@@ -44,6 +48,7 @@
     <select class="input-cell"
       v-else-if="this.isSelect(cookieField)"
       :data-key="cookieField.key"
+      :id="this.getCellId(cookieField.key)"
       tabindex="0"
       @mouseup="(e) => this.onMouseUp(e, cellIdx, cookieField.key)"
       @blur="this.onBlur"
@@ -89,8 +94,15 @@ export default {
       type: Boolean,
       default: false,
     },
+    place: {
+      type: String,
+      required: true,
+    },
   },
   methods: {
+    getCellId(cookieFieldKey) {
+      return this.place === 'editor' ? `e-${cookieFieldKey}` : `r-${cookieFieldKey}`;
+    },
     isRenderableField(cookieField) {
       return cookieField.key !== 'session';
     },
@@ -114,7 +126,7 @@ export default {
     },
     getOutputImmutableText(cookieField) {
       if (cookieField.key === 'secure') {
-        return cookieField.value ? '✓' : '';
+        return cookieField.value ? '✓' : '×';
       }
 
       return cookieField.value;
@@ -142,7 +154,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  input {
+  input, textarea {
     font-size: 13px;
     background-color: unset;
 
@@ -154,18 +166,19 @@ export default {
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
-      transition: box-shadow 150ms ease-in-out;
+      transition: box-shadow 80ms ease-in-out;
 
-      &[type="text"] {
+      &:not([type="checkbox"]) {
         height: 100%;
         padding: 3px 4px 3px 4px;
 
         &:hover {
-          box-shadow: 0 0 0 1px #bbb;
+          outline: 1px solid #777;
         }
 
         &:focus {
-          box-shadow: 0 0 0 1px #999;
+          box-shadow: 0 0 1px 2px #59a0ee;
+          outline: none;
           background-color: white;
         }
       }
@@ -183,6 +196,7 @@ export default {
 
   select.input-cell {
     margin-left: 4px;
+    height: 100%;
 
     &:focus {
       outline: 1px dotted black;

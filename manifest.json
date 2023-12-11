@@ -10,8 +10,8 @@
     "128": "images/icon128.png"
   },
   "manifest_version": 3,
-  "version": "1.2.1",
-  "permissions": ["tabs", "cookies", "storage"],
+  "version": "1.2.2",
+  "permissions": ["cookies", "storage"],
   "incognito": "spanning",
   "host_permissions": ["<all_urls>"],
   "devtools_page": "devtools.html"

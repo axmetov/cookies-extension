@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.2
+### Changed
+- Cookie Viewer's icons are SVGs now
+- Some styling for buttons
+- Removed redundant "tabs" permission
+- Listen for resources to be loaded on page refresh to reload all available cookies (sometimes resources are loaded after the page is refreshed)
+
 ## 1.2.1
 ### Changed
 - Icons are SVGs now

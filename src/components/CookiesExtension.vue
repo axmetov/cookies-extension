@@ -37,6 +37,7 @@ export default {
       }
     });
 
+    // when the active tab is refreshed, reload cookies
     chrome.tabs.onUpdated.addListener(tabId => {
       chrome.tabs.query({ active:true }, tabs => {
         for (const tab of tabs) {
@@ -46,6 +47,11 @@ export default {
           }
         }
       });
+    });
+
+    // but sometimes resources of the page are loaded after the refresh is finished
+    chrome.devtools.inspectedWindow.onResourceAdded.addListener(() => {
+      this.$store.dispatch('loadCookiesFromChrome');
     });
 
     document.addEventListener('mousemove', this.handleDragging);
