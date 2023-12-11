@@ -242,11 +242,9 @@ export default {
         align-self: baseline;
       }
 
-      :deep(input) {
-        &.input-cell {
-          border: 1px solid #ccc;
-          border-radius: 3px;
-        }
+      :deep(.input-cell) {
+        border: 1px solid #ccc;
+        border-radius: 3px;
 
         &[type="checkbox"] {
           margin: 0;
